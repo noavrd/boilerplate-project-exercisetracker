@@ -20,19 +20,20 @@ app.post("/api/exercise/new-user", async (req, res) => {
   const newUser = new User({
     name: userName,
   });
-  User.findOne({ name: userName })
-    .exec()
-    .then((doc) => {
-      if (doc) {
-        console.log("hello");
-      } else {
-        console.log("Goodbye");
-      }
-    });
+  // User.findOne({ name: userName })
+  //   .exec()
+  //   .then((doc) => {
+  //     if (doc) {
+  //       console.log("hello");
+  //     } else {
+  //       console.log("Goodbye");
+  //     }
+  //   });
   newUser
+    // .select([`_id`, `username`])
     .save()
     .then((result) => {
-      res.send(result);
+      res.send(`{"username": ${newUser.username}, "_id": ${newUser._id}}`);
     })
     .catch((err) => {
       res.status(500).send(`Internal server error ${err}`);
@@ -43,6 +44,11 @@ app.post("/api/exercise/new-user", async (req, res) => {
   //   res.status(400).send("Username already taken");
   // }
 });
+
+app.get("api/exercise/users", (req, res) => {
+  res.send();
+});
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log("Your app is listening on port " + listener.address().port);
 });

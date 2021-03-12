@@ -6,6 +6,7 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  __v: { type: Number, select: false },
 });
 const User = new mongoose.model(`User`, UserSchema);
 module.exports = User;
