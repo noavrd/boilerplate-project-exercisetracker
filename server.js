@@ -30,10 +30,9 @@ app.post("/api/exercise/new-user", async (req, res) => {
   //     }
   //   });
   newUser
-    // .select([`_id`, `username`])
     .save()
     .then((result) => {
-      res.send(`{"username": ${newUser.username}, "_id": ${newUser._id}}`);
+      res.send(`{"username": "${newUser.name}", "_id": "${newUser._id}"}`);
     })
     .catch((err) => {
       res.status(500).send(`Internal server error ${err}`);
