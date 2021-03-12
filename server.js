@@ -16,32 +16,17 @@ app.get("/", (req, res) => {
 
 app.post("/api/exercise/new-user", async (req, res) => {
   const userName = req.body.username;
-
   const newUser = new User({
     username: userName,
   });
-  // User.findOne({ name: userName })
-  //   .exec()
-  //   .then((doc) => {
-  //     if (doc) {
-  //       console.log("hello");
-  //     } else {
-  //       console.log("Goodbye");
-  //     }
-  //   });
-  newUser
-    .save()
-    .then((result) => {
-      res.send(`{"username": "${newUser.username}", "_id": "${newUser._id}"}`);
-    })
-    .catch((err) => {
-      res.status(500).send(`Internal server error ${err}`);
-    });
-
-  // await console.log(User.findOne({ name: userName }).exec());
-  // if (User.findOne({ name: userName }).exec()) {
-  //   res.status(400).send("Username already taken");
-  // }
+  newUser.save((err, user) => {
+    if (!err) {
+      let responseObj = {};
+      responseObj.username = userName;
+      responseObj._id = user._id;
+      res.json(responseObj);
+    }
+  });
 });
 
 app.get("api/exercise/users", (req, res) => {
