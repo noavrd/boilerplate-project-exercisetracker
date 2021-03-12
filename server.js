@@ -29,8 +29,12 @@ app.post("/api/exercise/new-user", async (req, res) => {
   });
 });
 
-app.get("api/exercise/users", (req, res) => {
-  res.send();
+app.get("/api/exercise/users", (req, res) => {
+  User.find({}, (err, userArr) => {
+    if (!err) {
+      res.json(userArr);
+    }
+  });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
