@@ -18,7 +18,7 @@ app.post("/api/exercise/new-user", async (req, res) => {
   const userName = req.body.username;
 
   const newUser = new User({
-    name: userName,
+    username: userName,
   });
   // User.findOne({ name: userName })
   //   .exec()
@@ -32,7 +32,7 @@ app.post("/api/exercise/new-user", async (req, res) => {
   newUser
     .save()
     .then((result) => {
-      res.send(`{"username": "${newUser.name}", "_id": "${newUser._id}"}`);
+      res.send(`{"username": "${newUser.username}", "_id": "${newUser._id}"}`);
     })
     .catch((err) => {
       res.status(500).send(`Internal server error ${err}`);
