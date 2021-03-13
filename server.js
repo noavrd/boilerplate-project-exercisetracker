@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const { User, Exercise } = require("./model");
+const { request } = require("express");
 require("dotenv").config();
 
 app.use(express.json());
@@ -39,17 +40,20 @@ app.get("/api/exercise/users", (req, res) => {
 // test 4
 app.post("/api/exercise/add", (req, res) => {
   let newExerciseItem = new Exercise({
-    description: request.body.description,
-    duration: parseInt(request.body.duration),
-    date: request.body.date,
+    description: req.body.description,
+    duration: parseInt(req.body.duration),
+    date: req.body.date,
   });
 
   if (newExerciseItem.date === "") {
-    newExerciseItem.date = new Date().toISOString().substring(0, 10);
+    newExerciseItem.date = new Date()
+      .toISOString()
+      .substring(0, 10)
+      .toDateString();
   }
 
   User.findByIdAndUpdate(
-    request.body.userId,
+    req.body.userId,
     { $push: { log: newExerciseItem } },
     { new: true },
     (error, updatedUser) => {
@@ -60,10 +64,32 @@ app.post("/api/exercise/add", (req, res) => {
         responseObject["description"] = newExerciseItem.description;
         responseObject["duration"] = newExerciseItem.duration;
         responseObject["date"] = new Date(newExerciseItem.date).toDateString();
-        response.json(responseObject);
+        res.json(responseObject);
       }
     }
   );
+});
+// tests 5 + 6
+app.get(`/api/exercise/log`, (req, res) => {
+  User.findById(req.query.userId, (err, user) => {
+    if (!err) {
+      let resObj = {};
+      resObj._id = user._id;
+      resObj.username = user.username;
+      resObj.count = user.log.length;
+      resObj.log = [];
+      for (userLog of user.log) {
+        const logObj = {
+          description: userLog.description,
+          duration: userLog.duration,
+          date: userLog.date,
+        };
+        resObj.log.push(logObj);
+        console.log(userLog);
+      }
+      res.json(resObj);
+    }
+  });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
