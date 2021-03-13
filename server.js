@@ -38,25 +38,29 @@ app.get("/api/exercise/users", (req, res) => {
 });
 // test 4
 app.post("/api/exercise/add", (req, res) => {
-  const userData = req.body;
-  const newExercise = new Exercise({
-    date: userData.date || new Date().toDateString(),
-    duration: userData.duration,
-    description: userData.description,
+  let newExerciseItem = new Exercise({
+    description: request.body.description,
+    duration: parseInt(request.body.duration),
+    date: request.body.date,
   });
+
+  if (newExerciseItem.date === "") {
+    newExerciseItem.date = new Date().toISOString().substring(0, 10);
+  }
+
   User.findByIdAndUpdate(
-    userData.userId,
-    { $push: { log: newExercise } },
+    request.body.userId,
+    { $push: { log: newExerciseItem } },
     { new: true },
-    (err, updatedUser) => {
-      if (!err) {
-        let resObj = {};
-        resObj.username = updatedUser.username;
-        resObj.description = newExercise.description;
-        resObj.duration = newExercise.duration;
-        resObj._id = updatedUser._id;
-        resObj.date = newExercise.date;
-        res.json(resObj);
+    (error, updatedUser) => {
+      if (!error) {
+        let responseObject = {};
+        responseObject["_id"] = updatedUser.id;
+        responseObject["username"] = updatedUser.username;
+        responseObject["description"] = newExerciseItem.description;
+        responseObject["duration"] = newExerciseItem.duration;
+        responseObject["date"] = new Date(newExerciseItem.date).toDateString();
+        response.json(responseObject);
       }
     }
   );

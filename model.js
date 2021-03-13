@@ -10,17 +10,17 @@ mongoose.connect(
     console.log("connected to mongo DB");
   }
 );
-const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  __v: { type: Number, select: false },
-});
-const User = new mongoose.model(`User`, UserSchema);
 
 const ExerciseSchema = new mongoose.Schema({
   date: String,
   duration: { type: Number, required: true },
   description: { type: String, required: true },
 });
+const UserSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  log: [ExerciseSchema],
+});
 const Exercise = new mongoose.model(`Exercise`, ExerciseSchema);
+const User = new mongoose.model(`User`, UserSchema);
 
 module.exports = { User, Exercise };
