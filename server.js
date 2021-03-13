@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const User = require("./model");
+const { User, Exercise } = require("./model");
 require("dotenv").config();
 
 app.use(express.json());
@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
-
+// test 2
 app.post("/api/exercise/new-user", async (req, res) => {
   const userName = req.body.username;
   const newUser = new User({
@@ -28,13 +28,38 @@ app.post("/api/exercise/new-user", async (req, res) => {
     }
   });
 });
-
+// test 3
 app.get("/api/exercise/users", (req, res) => {
   User.find({}, (err, userArr) => {
     if (!err) {
       res.json(userArr);
     }
   });
+});
+// test 4
+app.post("/api/exercise/add", (req, res) => {
+  const userData = req.body;
+  const newExercise = new Exercise({
+    date: userData.date || new Date().toDateString(),
+    duration: userData.duration,
+    description: userData.description,
+  });
+  User.findByIdAndUpdate(
+    userData.userId,
+    { $push: { log: newExercise } },
+    { new: true },
+    (err, updatedUser) => {
+      if (!err) {
+        let resObj = {};
+        resObj._id = updatedUser._id;
+        resObj.username = updatedUser.username;
+        resObj.date = newExercise.date;
+        resObj.description = newExercise.description;
+        resObj.duration = newExercise.duration;
+        res.json(resObj);
+      }
+    }
+  );
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
