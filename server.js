@@ -51,11 +51,11 @@ app.post("/api/exercise/add", (req, res) => {
     (err, updatedUser) => {
       if (!err) {
         let resObj = {};
-        resObj._id = updatedUser._id;
         resObj.username = updatedUser.username;
-        resObj.date = newExercise.date;
         resObj.description = newExercise.description;
         resObj.duration = newExercise.duration;
+        resObj._id = updatedUser._id;
+        resObj.date = newExercise.date;
         res.json(resObj);
       }
     }
